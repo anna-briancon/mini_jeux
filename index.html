@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Jeux</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Titan+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            height: 90vh;
+            background-color: #e6e6e6;
+            font-family: 'Luckiest Guy', cursive;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 10vh;
+        }
+
+        #jeu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+
+        .jeu-case {
+            width: 300px;
+            height: 300px;
+            margin: 0 5vw;
+            border: 2px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .jeu-case:hover {
+            transform: scale(1.1);
+        }
+
+        .jeu-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Mini Jeux</h1>
+    <div id="jeu">
+        <div class="jeu-case" onclick="redirigerVersJeu('jeux/casse_briques/casse_briques.html')">
+            <img class="jeu-image" src="assets/casse_briques/jeu_casse_briques.png" alt="Casse Briques">
+        </div>
+
+        <div class="jeu-case" onclick="redirigerVersJeu('jeux/snake/snake.html')">
+            <img class="jeu-image" src="assets/snake/jeu_snake.png" alt="Snake">
+        </div>
+        <!-- <div class="jeu-case" onclick="redirigerVersJeu('autre-jeu.html')">
+            <img class="jeu-image" src="chemin/vers/mini-jeux/autre-jeu.jpg" alt="fqsfs">
+        </div> -->
+  
+    </div>
+    <script>
+        function redirigerVersJeu(chemin) {
+            window.location.href = chemin;
+        }
+    </script>
+</body>
+
+</html>

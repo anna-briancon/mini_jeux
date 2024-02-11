@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Titan+One&display=swap" rel="stylesheet">
+    <!-- lien vers css  -->
+    <link rel="stylesheet" href="casse_briques.css">
+    <title>Jeu casse briques</title>
+</head>
+
+<body>
+    <div id="filtre">
+
+        <h1>Jeu casse briques</h1>
+        <p style="color:white; text-align: center;">Score: <span id="score">0</span></p>
+
+        <canvas id="casseBrique" width="620" height="478"></canvas>
+
+        <button id="retourButton" onclick="retourAccueil()"> Retour</button>
+        <button id="rejouerButton" onclick="window.location.reload()">Rejouer</button>
+
+        <script src="casse_briques.js"></script>
+        <script>
+            function retourAccueil() {
+                window.location.href = "../../index.html";
+            }
+        </script>
+    </div>
+</body>
+
+</html>

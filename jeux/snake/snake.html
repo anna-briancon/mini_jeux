@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Titan+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("../../assets/snake/herbe.png");
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: fantasy;
+            letter-spacing: 2px;
+            font-size: larger;
+            font-family: 'Luckiest Guy', cursive;
+        }
+
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #000;
+            background-color: #ffffff5d;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-top: 5vh;
+            text-align: center;
+            color: rgb(255, 255, 255);
+        }
+
+        p {
+            color: rgb(0, 0, 0);
+            font-size: 20px;
+            text-align: center;
+        }
+
+        #retourButton {
+            position: absolute;
+            top: 10vh;
+            left: 10vh;
+            padding: 20px 40px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #472b09;
+            color: white;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #retourButton:hover {
+            background-color: #331c02;
+        }
+
+        #rejouerButton {
+            position: absolute;
+            top: 10vh;
+            right: 10vh;
+            padding: 20px 40px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #472b09;
+            color: white;
+            border: none;
+            border-radius: 10px;
+        }
+
+        #rejouerButton:hover {
+            background-color: #331c02;
+        }
+
+        .game-over-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000000;
+        }
+
+        .game-over-dialog p {
+            text-align: center;
+            margin-bottom: 15px;
+        
+        }
+
+        .game-over-dialog button {
+            padding: 8px 15px;
+            background-color: #472b09;
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .game-over-dialog button:hover {
+            background-color: #331c02;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Snake Game</h1>
+    <p style="color: white;">Score: <span id="score">0</span></p>
+    <canvas id="snakeCanvas" width="600" height="600"></canvas>
+    <button id="retourButton" onclick="retourAccueil()"> Retour</button>
+    <button id="rejouerButton" onclick="window.location.reload()">Rejouer</button>
+
+    <script>
+        function retourAccueil() {
+            window.location.href = "../../index.html";
+        }
+        const canvas = document.getElementById("snakeCanvas");
+        const ctx = canvas.getContext("2d");
+        const scoreElement = document.getElementById("score");
+
+        const gridSize = 20;
+        let snake = [{ x: 10, y: 10 }];
+        let direction = "right";
+        let food = getRandomFoodPosition();
+        let score = 0;
+        const snakeImage = new Image();
+        snakeImage.src = "../../assets/snake/cercle2.png";
+
+        const foodImage = new Image();
+        foodImage.src = "../../assets/snake/pomme2.png";
+        function getRandomFoodPosition() {
+            return {
+                x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                y: Math.floor(Math.random() * (canvas.height / gridSize))
+            };
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            snake.forEach(segment => {
+                ctx.drawImage(snakeImage, segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+            });
+
+            ctx.drawImage(foodImage, food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+        }
+
+        function update() {
+            if (gameoverDialogShown) {
+                return;
+            }
+            const head = { ...snake[0] };
+
+            if (direction === "up") head.y--;
+            else if (direction === "down") head.y++;
+            else if (direction === "left") head.x--;
+            else if (direction === "right") head.x++;
+
+            if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
+                showGameOverDialog();
+                resetGame();
+                return;
+            }
+
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                scoreElement.textContent = score;
+                snake.push({ ...snake[snake.length - 1] });
+                food = getRandomFoodPosition();
+            } else {
+                snake.pop();
+            }
+
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                showGameOverDialog();
+                resetGame();
+                return;
+            }
+
+            snake.unshift(head);
+        }
+        let gameoverDialogShown = false;
+
+        function showGameOverDialog() {
+            if (!gameoverDialogShown) {
+                gameoverDialogShown = true;
+
+                const gameOverDialog = document.createElement("div");
+                gameOverDialog.className = "game-over-dialog";
+                gameOverDialog.innerHTML = `
+            <div style="text-align: center;">
+                <p>Vous avez perdu ! Votre score est : ${score}</p>
+                <button onclick="rejouer()">Rejouer</button>
+                <button onclick="arreter()">Arrêter</button>
+            </div>
+        `;
+                gameOverDialog.style.position = "fixed";
+                gameOverDialog.style.top = "50%";
+                gameOverDialog.style.left = "50%";
+                gameOverDialog.style.transform = "translate(-50%, -50%)";
+                gameOverDialog.style.backgroundColor = "#ffffff";
+                gameOverDialog.style.padding = "20px";
+                gameOverDialog.style.borderRadius = "5px";
+                gameOverDialog.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
+                gameOverDialog.style.zIndex = "1000000";
+
+                document.body.appendChild(gameOverDialog);
+            }
+        }
+
+        function rejouer() {
+            document.location.reload();
+        }
+
+        function arreter() {
+            gameoverDialogShown = true;
+
+            const gameOverDialog = document.querySelector(".game-over-dialog");
+            gameOverDialog.parentNode.removeChild(gameOverDialog);
+
+        }
+        function resetGame() {
+            snake = [{ x: 10, y: 10 }];
+            direction = "right";
+            food = getRandomFoodPosition();
+            score = 0;
+            scoreElement.textContent = score;
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            setTimeout(gameLoop, 100);
+        }
+
+        window.addEventListener("keydown", event => {
+            if (event.key === "ArrowUp" && direction !== "down") direction = "up";
+            else if (event.key === "ArrowDown" && direction !== "up") direction = "down";
+            else if (event.key === "ArrowLeft" && direction !== "right") direction = "left";
+            else if (event.key === "ArrowRight" && direction !== "left") direction = "right";
+        });
+        Promise.all([snakeImage.onload, foodImage.onload]).then(() => {
+            gameLoop();
+        });
+    </script>
+</body>
+
+</html>
